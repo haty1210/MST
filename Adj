@@ -1,0 +1,142 @@
+
+import java.io.File;
+import java.util.Scanner;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.*;  
+
+
+public class Graph {
+
+	private static ArrayList<LinkedList<Edge>> G;    
+
+	private static int d;
+	private static int e;
+	private static int nv;
+	private static boolean[] visited; 
+	private static int count = 0; 
+	private static String filename = null;
+	  
+	public static class Edge {
+		private int v1;
+		private int v2;
+		private double weight;
+
+		public Edge(int v1, int v2, int weight) {
+			this.v1 = v1;
+			this.v2 = v2;
+			this.weight = weight;
+		}
+	}
+	
+	public static void RandomGraph(int s, int t) {
+		e = t*s*s/200-d*s/200;
+		
+		visited = new boolean[s];
+		G = new ArrayList<LinkedList<Edge>>(s);
+		for (int i=0; i<s; i++)
+			G.add(new LinkedList<Edge>());
+		
+		 for(int j = 0;j < e;j++){
+				
+     		int u=(int) (Math.random()*s);
+     		int v=(int) (Math.random()*s); 
+     		int w;
+				if(u == v){
+     			w = 0;
+     		}
+     		else
+		        w = (int) (Math.random()*1000 + 1); 
+             addEdge(u,v,w);
+             System.out.print(u+" ");
+             System.out.print(v+" ");
+             System.out.println(w+" ");
+	    }		           
+		 
+	}
+	
+	public static void addEdge(int v1, int v2, int weight) {
+		try {
+			Edge edge1 = new Edge(v1, v2, weight);
+			G.get(v1).add(edge1);
+			Edge edge2 = new Edge(v2, v1, weight);
+			G.get(v2).add(edge2);
+		} catch (IndexOutOfBoundsException e) {
+			//e.printStackTrace();
+		}
+	}
+	
+	public static void dfs(int s, boolean[] visited) {
+		count++;
+		visited[s] = true;
+		for (Edge edge : G.get(s)){
+			if (!visited[edge.v2])
+				dfs(edge.v2, visited);
+		}
+	}
+	
+	public static void main(String[] args) {
+		if (args.length == 5){
+			int nv = Integer.parseInt(args[3]);
+		    int d = Integer.parseInt(args[4]);	  
+		    
+		    RandomGraph(nv,d);		    
+		    while(count != nv){
+		    	 RandomGraph(nv,d);     
+		         dfs(0, visited);
+		         System.out.println(count);
+	       }
+	       System.out.println("Connected.");
+		}
+		    
+	
+		
+		
+		
+		else if(args.length == 4){
+			 
+			filename = args[3];					
+			
+            try {
+    			Scanner sc = new Scanner(new File(filename));
+    			G = new ArrayList<LinkedList<Edge>>(nv);
+    			for (int i=0; i<nv; i++)
+    				G.add(new LinkedList<Edge>());
+    			
+    			nv = sc.nextInt();
+    			e = sc.nextInt();
+    			
+    			System.out.print(nv+" ");
+    			System.out.println(e);
+    		
+    			while (sc.hasNextInt()) {
+    				int u = sc.nextInt();
+    				int v = sc.nextInt();
+    				int w = sc.nextInt();
+
+    				addEdge(u, v, w);
+    				
+      	             System.out.print(u+" ");
+       	             System.out.print(v+" ");
+       	             System.out.println(w+" ");
+
+    			}
+    			
+    			sc.close();
+    			
+    		} catch (FileNotFoundException e) {
+    			System.out.println("Error: could not find file "+filename);
+    			System.exit(0);
+    		} 
+            catch (InputMismatchException e) {
+    			System.out.println("Error: incorrect format in "+filename);
+    			System.exit(0);
+    		}
+		}
+				
+	
+	}
+}
+
+
+	
